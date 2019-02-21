@@ -3,7 +3,7 @@ Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional
 
 
 
-Highlights :
+### Highlights :
 
 - Propose a general image fusion framework based on convolutional neural network
 - Demonstrate good generalization ability for fusing various types of images
@@ -13,13 +13,13 @@ Highlights :
 
 
 
-The structure of our image fusion model is as follows.
+### Architecture of our image fusion model:
 
 ![flowchart](https://github.com/uzeful/IFCNN/blob/master/flowchart.png)
 
 
 
-Datasets:
+### Datasets:
 
 1. Multi-focus image dataset: [CMFDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/CMFDataset )
 2. Infrared and visual image dataset: [IVDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/IVDataset)
@@ -28,7 +28,7 @@ Datasets:
 
 
 
-Comparison Examples:
+### Comparison Examples:
 
 1. Multi-focus image fusion
 ![CMF05](https://github.com/uzeful/IFCNN/blob/master/Comparisons/CMF05.png)
@@ -47,9 +47,13 @@ Comparison Examples:
 
 
 
-Other Results of Our Model:
+### Other Results of Our Model:
 
-1. Multi-focus image dataset: [Results\CMF](https://github.com/uzeful/IFCNN/tree/master/Results/CMF )
-2. Infrared and visual image dataset: [Results\IV](https://github.com/uzeful/IFCNN/tree/master/Results/IV)
-3. Multi-modal medical image dataset: [Results\MD](https://github.com/uzeful/IFCNN/tree/master/Results/MDDataset)
-4. Multi-exposure image dataset: [Results\ME](https://github.com/uzeful/IFCNN/tree/master/Results/ME)
+1. Multi-focus image dataset: [Results/CMF](https://github.com/uzeful/IFCNN/tree/master/Results/CMF)
+2. Infrared and visual image dataset: [Results/IV](https://github.com/uzeful/IFCNN/tree/master/Results/IV)
+3. Multi-modal medical image dataset: [Results/MD](https://github.com/uzeful/IFCNN/tree/master/Results/MDDataset)
+4. Multi-exposure image dataset: [Results/ME](https://github.com/uzeful/IFCNN/tree/master/Results/ME)
+
+### Citation:
+
+"IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network, Yu Zhang et al."
