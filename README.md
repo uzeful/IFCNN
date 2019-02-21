@@ -30,25 +30,26 @@ Datasets:
 
 Comparison Examples:
 
+1. Multi-focus image fusion
 ![CMF05](https://github.com/uzeful/IFCNN/blob/master/Comparisons/CMF05.png)
 
 
-
+2. Infrared and visual image fusion
 ![CMF05](https://github.com/uzeful/IFCNN/blob/master/Comparisons/IVroad.png)
 
 
-
+3. Multi-modal medical image fusion
 ![MDc02](https://github.com/uzeful/IFCNN/blob/master/Comparisons/MDc02.png)
 
 
-
+4. Multi-exposure image fusion
 ![MEdoor](https://github.com/uzeful/IFCNN/blob/master/Comparisons/MEdoor.png)
 
 
 
 Other Results of Our Model:
 
-1. Multi-focus image dataset: [Results\CMF](https://github.com/uzeful/IFCNN/blob/master/Results/CMF )
-2. Infrared and visual image dataset: [Results\IV](https://github.com/uzeful/IFCNN/blob/master/Results/IV)
-3. Multi-modal medical image dataset: [Results\MD](https://github.com/uzeful/IFCNN/blob/master/Results/MDDataset)
-4. Multi-exposure image dataset: [Results\ME](https://github.com/uzeful/IFCNN/blob/master/Results/ME)
+1. Multi-focus image dataset: [Results\CMF](https://github.com/uzeful/IFCNN/tree/master/Results/CMF )
+2. Infrared and visual image dataset: [Results\IV](https://github.com/uzeful/IFCNN/tree/master/Results/IV)
+3. Multi-modal medical image dataset: [Results\MD](https://github.com/uzeful/IFCNN/tree/master/Results/MDDataset)
+4. Multi-exposure image dataset: [Results\ME](https://github.com/uzeful/IFCNN/tree/master/Results/ME)
