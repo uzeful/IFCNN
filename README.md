@@ -15,40 +15,40 @@ Highlights :
 
 The structure of our image fusion model is as follows.
 
-![flowchart](.\flowchart.png)
+![flowchart](https://github.com/uzeful/IFCNN/blob/master/flowchart.png)
 
 
 
 Datasets:
 
-1. Multi-focus image dataset: [CMFDataset](.\Datasets\CMFDataset )
-2. Infrared and visual image dataset: [IVDataset](.\Datasets\IVDataset)
-3. Multi-modal medical image dataset: [MDDataset](.\Datasets\MDDataset)
-4. Multi-exposure image dataset: [MEDataset](.\Datasets\MEDataset)
+1. Multi-focus image dataset: [CMFDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/CMFDataset )
+2. Infrared and visual image dataset: [IVDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/IVDataset)
+3. Multi-modal medical image dataset: [MDDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/MDDataset)
+4. Multi-exposure image dataset: [MEDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/MEDataset)
 
 
 
 Comparison Examples:
 
-![CMF05](.\Comparisons\CMF05.png)
+![CMF05](https://github.com/uzeful/IFCNN/blob/master/Comparisons/CMF05.png)
 
 
 
-![CMF05](.\Comparisons\IVroad.png)
+![CMF05](https://github.com/uzeful/IFCNN/blob/master/Comparisons/IVroad.png)
 
 
 
-![MDc02](.\Comparisons\MDc02.png)
+![MDc02](https://github.com/uzeful/IFCNN/blob/master/Comparisons/MDc02.png)
 
 
 
-![MEdoor](.\Comparisons\MEdoor.png)
+![MEdoor](https://github.com/uzeful/IFCNN/blob/master/Comparisons/MEdoor.png)
 
 
 
 Other Results of Our Model:
 
-1. Multi-focus image dataset: [Results\CMF](.\Results\CMF )
-2. Infrared and visual image dataset: [Results\IV](.\Results\IV)
-3. Multi-modal medical image dataset: [Results\MD](.\Results\MDDataset)
-4. Multi-exposure image dataset: [Results\ME](Results\ME)
+1. Multi-focus image dataset: [Results\CMF](https://github.com/uzeful/IFCNN/blob/master/Results/CMF )
+2. Infrared and visual image dataset: [Results\IV](https://github.com/uzeful/IFCNN/blob/master/Results/IV)
+3. Multi-modal medical image dataset: [Results\MD](https://github.com/uzeful/IFCNN/blob/master/Results/MDDataset)
+4. Multi-exposure image dataset: [Results\ME](https://github.com/uzeful/IFCNN/blob/master/Results/ME)
