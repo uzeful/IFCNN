@@ -16,10 +16,10 @@ Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional
 
 
 ### Datasets:
-1. Multi-focus image dataset: [CMFDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/CMFDataset)
-2. Infrared and visual image dataset: [IVDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/IVDataset)
-3. Multi-modal medical image dataset: [MDDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/MDDataset)
-4. Multi-exposure image dataset: [MEDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/MEDataset)
+1. Multi-focus image dataset: [Datasets/CMFDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/CMFDataset)
+2. Infrared and visual image dataset: [Datasets/IVDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/IVDataset)
+3. Multi-modal medical image dataset: [Datasets/MDDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/MDDataset)
+4. Multi-exposure image dataset: [Datasets/MEDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/MEDataset)
 
 
 
