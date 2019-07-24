@@ -1,5 +1,5 @@
 # IFCNN
-Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network,  Information Fusion, Under Revision". 
+Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network,  Information Fusion, 2019". 
 
 ### Highlights :
 - Propose a general image fusion framework based on convolutional neural network
@@ -48,4 +48,4 @@ Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional
 4. Multi-exposure image dataset: [Results/ME](https://github.com/uzeful/IFCNN/tree/master/Results/ME)
 
 ### Citation:
-"IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network, Yu Zhang et al."
+"Yu Zhang, Yu Liu, Peng Sun, Han Yan, Xiaolin Zhao, Li Zhang. IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network. Information Fusion, 2019."
