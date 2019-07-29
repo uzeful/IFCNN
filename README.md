@@ -3,14 +3,14 @@ Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional
 
 
 
-# Requirements:
-1. The code is tested with Ubuntu 14.04, cuda-8.0 and pytorch 0.4.1
-2. The required packages include pytorch 0.4.1, torchvision, opencv-python, numpy, jupyter notebook
+### Requirements:
+- The code is tested with Ubuntu 14.04, cuda-8.0 and pytorch 0.4.1
+- The required packages include pytorch 0.4.1, torchvision, opencv-python, numpy, jupyter notebook
 
 
-# Usage:
-1. Directly run "python IFCNN_Main.py" to replicate our image fusion method
-2. Or run "jupyter notebook IFCNN_Notebook.ipynb" to run the code part by part
+### Usage:
+- Change to the [code direction](https://github.com/uzeful/IFCNN/tree/master/Code), then directly run "python IFCNN_Main.py" to replicate our image fusion method
+- Or run "jupyter notebook IFCNN_Notebook.ipynb" to run the code part by part
 
 
 ### Highlights:
@@ -28,10 +28,10 @@ Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional
 
 
 ### Datasets:
-1. Multi-focus image dataset: [Datasets/CMFDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/CMFDataset)
-2. Infrared and visual image dataset: [Datasets/IVDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/IVDataset)
-3. Multi-modal medical image dataset: [Datasets/MDDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/MDDataset)
-4. Multi-exposure image dataset: [Datasets/MEDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/MEDataset)
+1. Multi-focus image dataset: [Code/datasets/CMFDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/CMFDataset)
+2. Infrared and visual image dataset: [Code/datasets/IVDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/IVDataset)
+3. Multi-modal medical image dataset: [Code/datasets/MDDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/MDDataset)
+4. Multi-exposure image dataset: [Code/datasets/MEDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/MEDataset)
 
 
 
