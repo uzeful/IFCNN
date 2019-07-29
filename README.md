@@ -1,7 +1,19 @@
 # IFCNN
-Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network,  Information Fusion, 2019". 
+Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network,  Information Fusion, 54 (2020) 99-118". 
 
-### Highlights :
+
+
+# Requirements:
+1. The code is tested with Ubuntu 14.04, cuda-8.0 and pytorch 0.4.1
+2. The required packages include pytorch 0.4.1, torchvision, opencv-python, numpy, jupyter notebook
+
+
+# Usage:
+1. Directly run "python IFCNN_Main.py" to replicate our image fusion method
+2. Or run "jupyter notebook IFCNN_Notebook.ipynb" to run the code part by part
+
+
+### Highlights:
 - Propose a general image fusion framework based on convolutional neural network
 - Demonstrate good generalization ability for fusing various types of images
 - Perform comparably or even better than other algorithms on four image datasets
@@ -16,10 +28,10 @@ Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional
 
 
 ### Datasets:
-1. Multi-focus image dataset: [Datasets/CMFDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/CMFDataset)
-2. Infrared and visual image dataset: [Datasets/IVDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/IVDataset)
-3. Multi-modal medical image dataset: [Datasets/MDDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/MDDataset)
-4. Multi-exposure image dataset: [Datasets/MEDataset](https://github.com/uzeful/IFCNN/blob/master/Datasets/MEDataset)
+1. Multi-focus image dataset: [Datasets/CMFDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/CMFDataset)
+2. Infrared and visual image dataset: [Datasets/IVDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/IVDataset)
+3. Multi-modal medical image dataset: [Datasets/MDDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/MDDataset)
+4. Multi-exposure image dataset: [Datasets/MEDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/MEDataset)
 
 
 
@@ -59,8 +71,9 @@ If you find this code is useful for your research, please consider to cite our p
   title={IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network},
   author={Zhang, Yu and Liu, Yu and Sun, Peng and Yan, Han and Zhao, Xiaolin and Zhang, Li},
   journal={Information Fusion},
-  year={2019},
+  volume={54},
+  pages={99--118},
+  year={2020},
   publisher={Elsevier}
 }
 ```
-"Yu Zhang, Yu Liu, Peng Sun, Han Yan, Xiaolin Zhao, Li Zhang. IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network. Information Fusion, 2019."
