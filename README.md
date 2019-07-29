@@ -60,7 +60,7 @@ Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional
 4. Multi-exposure image dataset: [Results/ME](https://github.com/uzeful/IFCNN/tree/master/Results/ME)
 
 ### Typos
-Eq. (4) in our paper is wrongly written, please the correct expression can be found from the official expression in [OpenCV document](https://docs.opencv.org/3.4.2/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa), i.e.,
+Note that Eq. (4) in our paper is wrongly written, the correct expression can be found from the official expression in [OpenCV document](https://docs.opencv.org/3.4.2/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa), i.e.,
 ![Eq4](https://github.com/uzeful/IFCNN/blob/master/Others/Eq4.png), where i=0...2kr, \alpha is the scale factor chosen so that \sum G(i)=1, ksize=2kr+1 and \sigma=0.6(ksize−1)+0.8.
 
 
