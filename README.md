@@ -47,5 +47,21 @@ Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional
 3. Multi-modal medical image dataset: [Results/MD](https://github.com/uzeful/IFCNN/tree/master/Results/MDDataset)
 4. Multi-exposure image dataset: [Results/ME](https://github.com/uzeful/IFCNN/tree/master/Results/ME)
 
+### Typos
+Eq. (4) in our paper is wrongly written, please the correct expression can be found from the official expression in [OpenCV document](https://docs.opencv.org/3.4.2/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa), i.e.,
+![Eq4](https://github.com/uzeful/IFCNN/blob/master/other/Eq4.png)
+where *i*=0...2*kr*, *\alpha* is the scale factor chosen so that ∑*G*(*i*)=1, *ksize*=2*kr*+1 and *\sigma*=0.6(*ksize*−1)+0.8.
+
+
 ### Citation:
+If you find this code is useful for your research, please consider to cite our paper.
+```
+@article{zhang2019IFCNN,
+  title={IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network},
+  author={Zhang, Yu and Liu, Yu and Sun, Peng and Yan, Han and Zhao, Xiaolin and Zhang, Li},
+  journal={Information Fusion},
+  year={2019},
+  publisher={Elsevier}
+}
+```
 "Yu Zhang, Yu Liu, Peng Sun, Han Yan, Xiaolin Zhao, Li Zhang. IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network. Information Fusion, 2019."
