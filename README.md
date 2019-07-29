@@ -67,7 +67,7 @@ Eq. (4) in our paper is wrongly written, please the correct expression can be fo
 ### Citation:
 If you find this code is useful for your research, please consider to cite our paper.
 ```
-@article{zhang2019IFCNN,
+@article{zhang2020IFCNN,
   title={IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network},
   author={Zhang, Yu and Liu, Yu and Sun, Peng and Yan, Han and Zhao, Xiaolin and Zhang, Li},
   journal={Information Fusion},
