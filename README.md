@@ -9,7 +9,7 @@ Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional
 
 
 ### Usage:
-- Change to the [code direction](https://github.com/uzeful/IFCNN/tree/master/Code), then directly run "python IFCNN_Main.py" to replicate our image fusion method
+- Change to the [code directory](https://github.com/uzeful/IFCNN/tree/master/Code), then directly run "python IFCNN_Main.py" to replicate our image fusion method
 - Or run "jupyter notebook IFCNN_Notebook.ipynb" to run the code part by part
 
 
