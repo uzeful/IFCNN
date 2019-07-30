@@ -14,11 +14,13 @@ Project page of  "[IFCNN: A General Image Fusion Framework Based on Convolutiona
 
 ### Configuration
 ```bash
-# create your virtual environment using anaconda
+# Create your virtual environment using anaconda
 conda create -n IFCNN python=3.5
-# activate your virtual environment
+
+# Activate your virtual environment
 conda activate IFCNN
-# install the required libraries
+
+# Install the required libraries
 conda install pytorch=0.4.1 cuda80 -c pytorch
 conda install torchvision numpy jupyter notebook
 pip install opencv-python
@@ -27,14 +29,17 @@ pip install opencv-python
 
 ### Usage
 ```bash
-# download our code
+# Clone our code
 git clone https://github.com/uzeful/IFCNN.git
 cd IFCNN/Code
-# remember to activate your virtual enviroment before running our code
+
+# Remember to activate your virtual enviroment before running our code
 conda activate IFCNN
-# replicate our image method on fusing multiple types of images
+
+# Replicate our image method on fusing multiple types of images
 python IFCNN_Main.py
-# or run code part by part in notebook
+
+# Or run code part by part in notebook
 jupyter notebook IFCNN_Notebook.ipynb
 ```
 
