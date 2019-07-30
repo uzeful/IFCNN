@@ -3,27 +3,51 @@ Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional
 
 
 
-### Requirements:
-- The code is tested with Ubuntu 14.04, cuda 8.0, python 3.5.4 and pytorch 0.4.1
-- The required packages include pytorch 0.4.1, torchvision, opencv-python, numpy, jupyter notebook
+### Requirements
+- pytorch=0.4.1
+- python=3.x
+- torchvision
+- numpy
+- opencv-python
+- jupyter notebook (optional)
+- anaconda (suggeted)
+
+### Configuration
+```bash
+# create your virtual environment using anaconda
+conda create -n IFCNN python=3.5
+# activate your virtual environment
+conda activate IFCNN
+# install the required libraries
+conda install pytorch=0.4.1 cuda80 -c pytorch
+conda install torchvision numpy jupyter notebook
+pip install opencv-python
+```
+
+
+### Usage
+```bash
+# download our code
+git clone https://github.com/uzeful/IFCNN.git
+cd IFCNN/Code
+# remember to activate your virtual enviroment before running our code
+conda activate IFCNN
+# replicate our image method on fusing multiple types of images
+python IFCNN_Main.py
+# or run code part by part in notebook
+jupyter notebook IFCNN_Notebook.ipynb
+```
 
 
 
-### Usage:
-- Change to the [code directory](https://github.com/uzeful/IFCNN/tree/master/Code), then directly run "python IFCNN_Main.py" to replicate our image fusion method
-- Or run "jupyter notebook IFCNN_Notebook.ipynb" to run the code part by part
+### Typos
+1. Eq. (4) in our paper is wrongly written, the correct expression can be referred to the official expression in [OpenCV document](https://docs.opencv.org/3.4.2/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa), i.e.,
+<img src="https://latex.codecogs.com/gif.latex?G(i)=\alpha&space;\cdot&space;e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}" title="G(i)=\alpha \cdot e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}" />, where <img src="https://latex.codecogs.com/gif.latex?i=0&space;\cdots&space;(ksize-1)" title="i=0 \cdots (ksize-1)" />, <img src="https://latex.codecogs.com/gif.latex?\alpha" title="\alpha" /> is the scale factor chosen so that <img src="https://latex.codecogs.com/gif.latex?\sum&space;G(i)=1" title="\sum G(i)=1" />, <img src="https://latex.codecogs.com/gif.latex?ksize=2\times{kr}&plus;1" title="ksize=2\times{kr}+1" /> and <img src="https://latex.codecogs.com/gif.latex?\sigma=0.6\times(ksize−1)&plus;0.8" title="\sigma=0.6\times(ksize−1)+0.8" />. 
+2. Stride and padding parameters of CONV4 are respectively 1 and 0, rather than both 0.
 
 
 
-### Typos:
-Note that Eq. (4) in our paper is wrongly written, the correct expression can be found from the official expression in [OpenCV document](https://docs.opencv.org/3.4.2/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa), i.e.,
-$G(i)=\alpha \cdot e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}$, where $i=0 \cdots (ksize-1)$, $\alpha$ is the scale factor chosen so that $\sum G(i)=1$, $ksize=2\times{kr}+1$ and $\sigma=0.6\times(ksize−1)+0.8$. 
-
-(Suggest to install [github MathJax](https://github.com/orsharir/github-mathjax) for the better visualization of the maths.)
-
-
-
-### Highlights:
+### Highlights
 - Propose a general image fusion framework based on convolutional neural network
 - Demonstrate good generalization ability for fusing various types of images
 - Perform comparably or even better than other algorithms on four image datasets
@@ -32,20 +56,12 @@ $G(i)=\alpha \cdot e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}$, where $i=0 \cdots 
 
 
 
-### Architecture of our image fusion model:
+### Architecture of our image fusion model
 ![flowchart](https://github.com/uzeful/IFCNN/blob/master/flowchart.png)
 
 
 
-### Datasets:
-1. Multi-focus image dataset: [Code/datasets/CMFDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/CMFDataset)
-2. Infrared and visual image dataset: [Code/datasets/IVDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/IVDataset)
-3. Multi-modal medical image dataset: [Code/datasets/MDDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/MDDataset)
-4. Multi-exposure image dataset: [Code/datasets/MEDataset](https://github.com/uzeful/IFCNN/blob/master/Code/datasets/MEDataset)
-
-
-
-### Comparison Examples:
+### Comparison Examples
 1. Multi-focus image fusion
 ![CMF05](https://github.com/uzeful/IFCNN/blob/master/Comparisons/CMF05.png)
 
@@ -63,7 +79,7 @@ $G(i)=\alpha \cdot e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}$, where $i=0 \cdots 
 
 
 
-### Other Results of Our Model:
+### Other Results of Our Model
 1. Multi-focus image dataset: [Results/CMF](https://github.com/uzeful/IFCNN/tree/master/Results/CMF)
 2. Infrared and visual image dataset: [Results/IV](https://github.com/uzeful/IFCNN/tree/master/Results/IV)
 3. Multi-modal medical image dataset: [Results/MD](https://github.com/uzeful/IFCNN/tree/master/Results/MDDataset)
@@ -71,8 +87,9 @@ $G(i)=\alpha \cdot e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}$, where $i=0 \cdots 
 
 
 
-### Citation:
-If you find this code is useful for your research, please consider to cite our paper.
+### Citation
+If you find this code is useful for your research, please consider to cite our paper. Yu Zhang, Yu Liu, Peng Sun, Han Yan, Xiaolin Zhao, Li Zhang, [IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network](https://authors.elsevier.com/a/1ZTXt5a7-GbZZX),  Information Fusion, 54 (2020) 99-118.
+
 ```
 @article{zhang2020IFCNN,
   title={IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network},
