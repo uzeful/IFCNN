@@ -1,5 +1,5 @@
 # IFCNN
-Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network,  Information Fusion, 54 (2020) 99-118". 
+Project page of  "[IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network](https://authors.elsevier.com/a/1ZTXt5a7-GbZZX),  Information Fusion, 54 (2020) 99-118". 
 
 
 
@@ -41,8 +41,7 @@ jupyter notebook IFCNN_Notebook.ipynb
 
 
 ### Typos
-1. Eq. (4) in our paper is wrongly written, the correct expression can be referred to the official expression in [OpenCV document](https://docs.opencv.org/3.4.2/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa), i.e.,
-<img src="https://latex.codecogs.com/gif.latex?G(i)=\alpha&space;\cdot&space;e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}" title="G(i)=\alpha \cdot e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}" />, where <img src="https://latex.codecogs.com/gif.latex?i=0&space;\cdots&space;(ksize-1)" title="i=0 \cdots (ksize-1)" />, <img src="https://latex.codecogs.com/gif.latex?\alpha" title="\alpha" /> is the scale factor chosen so that <img src="https://latex.codecogs.com/gif.latex?\sum&space;G(i)=1" title="\sum G(i)=1" />, <img src="https://latex.codecogs.com/gif.latex?ksize=2\times{kr}&plus;1" title="ksize=2\times{kr}+1" /> and <img src="https://latex.codecogs.com/gif.latex?\sigma=0.6\times(ksize−1)&plus;0.8" title="\sigma=0.6\times(ksize−1)+0.8" />. 
+1. Eq. (4) in our paper is wrongly written, the correct expression can be referred to the official expression in [OpenCV document](https://docs.opencv.org/3.4.2/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa), i.e., <img src="https://latex.codecogs.com/gif.latex?G(i)=\alpha&space;\cdot&space;e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}" title="G(i)=\alpha \cdot e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}" />, where <img src="https://latex.codecogs.com/gif.latex?i=0&space;\cdots&space;(ksize-1)" title="i=0 \cdots (ksize-1)" />, <img src="https://latex.codecogs.com/gif.latex?ksize=2\times{kr}&plus;1" title="ksize=2\times{kr}+1" />, <img src="https://latex.codecogs.com/gif.latex?\sigma=0.6\times(ksize-1)&plus;0.8" title="\sigma=0.6\times(ksize-1)+0.8" />, and <img src="https://latex.codecogs.com/gif.latex?\alpha" title="\alpha" /> is the scale factor chosen for achieving <img src="https://latex.codecogs.com/gif.latex?\sum&space;G\left(i\right)=1" title="\sum G\left(i\right)=1" />.
 2. Stride and padding parameters of CONV4 are respectively 1 and 0, rather than both 0.
 
 
