@@ -17,7 +17,9 @@ Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional
 
 ### Typos:
 Note that Eq. (4) in our paper is wrongly written, the correct expression can be found from the official expression in [OpenCV document](https://docs.opencv.org/3.4.2/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa), i.e.,
-$G(i)=\alpha \cdot e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}$, where $i=0 \cdots (ksize-1)$, $\alpha$ is the scale factor chosen so that $\sum G(i)=1$, $ksize=2kr+1$ and $\sigma=0.6(ksize−1)+0.8$. (Suggest to render the maths with [github MathJax](https://github.com/orsharir/github-mathjax))
+$G(i)=\alpha \cdot e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}$, where $i=0 \cdots (ksize-1)$, $\alpha$ is the scale factor chosen so that $\sum G(i)=1$, $ksize=2\times{kr}+1$ and $\sigma=0.6\times(ksize−1)+0.8$. 
+
+(Suggest to install [github MathJax](https://github.com/orsharir/github-mathjax) for the better visualization of the maths.)
 
 
 
