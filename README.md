@@ -4,13 +4,21 @@ Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional
 
 
 ### Requirements:
-- The code is tested with Ubuntu 14.04, cuda-8.0 and pytorch 0.4.1
+- The code is tested with Ubuntu 14.04, cuda 8.0, python 3.5.4 and pytorch 0.4.1
 - The required packages include pytorch 0.4.1, torchvision, opencv-python, numpy, jupyter notebook
+
 
 
 ### Usage:
 - Change to the [code directory](https://github.com/uzeful/IFCNN/tree/master/Code), then directly run "python IFCNN_Main.py" to replicate our image fusion method
 - Or run "jupyter notebook IFCNN_Notebook.ipynb" to run the code part by part
+
+
+
+### Typos:
+Note that Eq. (4) in our paper is wrongly written, the correct expression can be found from the official expression in [OpenCV document](https://docs.opencv.org/3.4.2/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa), i.e.,
+$G(i)=\alpha \cdot e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}$, where $i=0 \cdots (ksize-1)$, $\alpha$ is the scale factor chosen so that $\sum G(i)=1$, $ksize=2kr+1$ and $\sigma=0.6(ksize−1)+0.8$. (Suggest to render the maths with [github MathJax](https://github.com/orsharir/github-mathjax))
+
 
 
 ### Highlights:
@@ -59,9 +67,6 @@ Project page of  "IFCNN: A General Image Fusion Framework Based on Convolutional
 3. Multi-modal medical image dataset: [Results/MD](https://github.com/uzeful/IFCNN/tree/master/Results/MDDataset)
 4. Multi-exposure image dataset: [Results/ME](https://github.com/uzeful/IFCNN/tree/master/Results/ME)
 
-### Typos
-Note that Eq. (4) in our paper is wrongly written, the correct expression can be found from the official expression in [OpenCV document](https://docs.opencv.org/3.4.2/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa), i.e.,
-![Eq4](https://github.com/uzeful/IFCNN/blob/master/Others/Eq4.png), where i=0...2kr, \alpha is the scale factor chosen so that \sum G(i)=1, ksize=2kr+1 and \sigma=0.6(ksize−1)+0.8.
 
 
 ### Citation:
