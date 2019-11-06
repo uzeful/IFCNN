@@ -1,5 +1,5 @@
 # IFCNN
-Project page of  "[IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network](https://authors.elsevier.com/a/1ZTXt5a7-GbZZX),  Information Fusion, 54 (2020) 99-118". 
+Project page of  "[IFCNN: A General Image Fusion Framework Based on Convolutional Neural Network](https://www.sciencedirect.com/science/article/pii/S1566253518305505),  Information Fusion, 54 (2020) 99-118". 
 
 
 
