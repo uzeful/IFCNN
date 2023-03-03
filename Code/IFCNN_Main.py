@@ -75,7 +75,7 @@ model = model.cuda()
 
 from utils.myDatasets import ImagePair
 
-IV_filenames = ['Camp', 'Camp1', 'Dune', 'Gun', 'Navi', 'Kayak', 'Octec', 'Road', 'Road2', 'Steamboat', 'T2', 'T3', 'Trees4906', 'Trees4917', 'Window']
+IV_filenames = ['Camp', 'Camp1', 'Dune', 'Gun', 'Navi', 'Kayak', 'Octec', 'Road', 'Road2', 'Steamboat', 'T2', 'T3', 'Trees4906', 'Trees4917']
 MF_filenames = ['clock',  'lab', 'pepsi', 'book', 'flower', 'desk', 'seascape', 'temple', 'leopard', 'wine', 'balloon', 'calendar', 'corner', 'craft', 'leaf', 'newspaper', 'girl', 'grass', 'toy']
 
 datasets = ['CMF', 'IV', 'MD'] # Color MultiFocus, Infrared-Visual, MeDical image datasets
