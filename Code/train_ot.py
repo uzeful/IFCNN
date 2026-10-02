@@ -6,8 +6,9 @@ and CONV2 stay frozen so that the feature space in which OT is solved is fixed.
 
 Loss on the fused image F given visible V and infrared I:
     L = L_pix + α L_grad + β L_ot
-    L_pix  = || F - V ||_1 + || F - max(V, I) ||_1            (intensity fidelity)
-    L_grad = || ∇F - max(|∇V|, |∇I|) ||_1                    (edge preservation)
+    target = w(V,I) I + (1-w(V,I)) V                         (activity target)
+    L_pix  = || F - target ||_1                              (intensity fidelity)
+    L_grad = || ∇F - ∇target ||_1                            (signed edge preservation)
     L_ot   = S_ε(φ(F), φ(V)) + S_ε(φ(F), φ(I))               (Sinkhorn divergence in feature space)
 
 Example:
@@ -36,21 +37,27 @@ def parse_args():
     p.add_argument('--save', default='snapshots/IFCNN-OT.pth')
     p.add_argument('--epochs', type=int, default=20)
     p.add_argument('--crop', type=int, default=128)
-    p.add_argument('--batch', type=int, default=4)
+    p.add_argument('--batch', type=int, default=2)
     p.add_argument('--lr', type=float, default=1e-4)
     p.add_argument('--alpha', type=float, default=1.0, help='gradient-loss weight')
     p.add_argument('--beta', type=float, default=0.1, help='OT-loss weight')
-    p.add_argument('--ot_points', type=int, default=1024, help='features sampled for the OT loss')
+    p.add_argument('--ot_points', type=int, default=256, help='features sampled for the OT loss')
     p.add_argument('--fuse_mode', default='adaptive', choices=['adaptive', 'interp', 'max'])
     p.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
     p.add_argument('--seed', type=int, default=0)
+    p.add_argument('--train_names',
+                   default='Camp1,Dune,Gun,Navi,Road2,Steamboat,T2,T3,Trees4906,Trees4917',
+                   help='comma-separated training scenes; keep evaluation scenes disjoint')
     return p.parse_args()
 
 
-def load_pairs(root):
+def load_pairs(root, names):
     to_t = transforms.ToTensor()
     pairs = []
-    for n in IV_FILENAMES:
+    unknown = sorted(set(names) - set(IV_FILENAMES))
+    if unknown:
+        raise ValueError('unknown training scenes: %s' % unknown)
+    for n in names:
         vis = to_t(Image.open(os.path.join(root, '%s_Vis.png' % n)).convert('RGB'))
         ir = to_t(Image.open(os.path.join(root, '%s_IR.png' % n)).convert('RGB'))
         pairs.append((vis, ir))
@@ -75,6 +82,21 @@ def gradient(x):
     return gx, gy
 
 
+def activity_target(vis, ir):
+    """Construct an explicit, differentiable-free target from local source activity."""
+    def activity(x):
+        gray = x.mean(dim=1, keepdim=True)
+        local = F.avg_pool2d(F.pad(gray, (2, 2, 2, 2), mode='replicate'), 5, stride=1)
+        gx, gy = gradient(gray)
+        gx = F.pad(gx.abs(), (0, 1, 0, 0))
+        gy = F.pad(gy.abs(), (0, 0, 0, 1))
+        return gx + gy + 0.5 * (gray - local).abs()
+
+    scores = torch.cat((activity(vis), activity(ir)), dim=1)
+    ir_weight = F.softmax(scores / 0.1, dim=1)[:, 1:2]
+    return (1 - ir_weight) * vis + ir_weight * ir
+
+
 def sample_points(feat, n):
     B, C, H, W = feat.shape
     flat = feat.flatten(2).transpose(1, 2)                         # (B, HW, C)
@@ -93,10 +115,15 @@ def main():
         p.requires_grad = False
     model.conv1.eval()
     model.conv2.eval()
-    params = list(model.conv3.parameters()) + list(model.conv4.parameters()) + [model.lam_logit]
+    params = list(model.conv3.parameters()) + list(model.conv4.parameters())
+    if args.fuse_mode != 'max':
+        params.append(model.lam_logit)
     opt = torch.optim.Adam(params, lr=args.lr)
 
-    pairs = load_pairs(args.root)
+    train_names = [n.strip() for n in args.train_names.split(',') if n.strip()]
+    if not train_names:
+        raise ValueError('--train_names must contain at least one scene')
+    pairs = load_pairs(args.root, train_names)
     steps_per_epoch = max(1, len(pairs) // args.batch)
 
     for epoch in range(args.epochs):
@@ -107,12 +134,11 @@ def main():
 
             out, aux = model(vis, ir, return_aux=True)
 
-            l_pix = F.l1_loss(out, vis) + F.l1_loss(out, torch.max(vis, ir))
+            target = activity_target(vis, ir)
+            l_pix = F.l1_loss(out, target)
             gxo, gyo = gradient(out)
-            gxv, gyv = gradient(vis)
-            gxi, gyi = gradient(ir)
-            l_grad = F.l1_loss(gxo.abs(), torch.max(gxv.abs(), gxi.abs())) + \
-                F.l1_loss(gyo.abs(), torch.max(gyv.abs(), gyi.abs()))
+            gxt, gyt = gradient(target)
+            l_grad = F.l1_loss(gxo, gxt) + F.l1_loss(gyo, gyt)
 
             f_out = model.extract(out)
             l_ot = (sinkhorn_divergence(sample_points(f_out, args.ot_points),
@@ -128,7 +154,15 @@ def main():
         print('epoch %3d  loss %.4f  lambda %.3f' % (epoch + 1, tot / steps_per_epoch, model.lam.item()))
 
     os.makedirs(os.path.dirname(args.save) or '.', exist_ok=True)
-    torch.save(model.state_dict(), args.save)
+    torch.save({
+        'model_state': model.state_dict(),
+        'optimizer_state': opt.state_dict(),
+        'model_config': model.config,
+        'training_config': vars(args),
+        'epoch': args.epochs,
+        'seed': args.seed,
+        'train_names': train_names,
+    }, args.save)
     print('saved', args.save)
 
 

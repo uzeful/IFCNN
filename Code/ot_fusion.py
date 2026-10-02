@@ -14,28 +14,32 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-def sinkhorn_log(cost, a=None, b=None, eps=0.05, n_iters=50):
+def sinkhorn_log(cost, row_marginal=None, col_marginal=None, eps=0.05, n_iters=50):
     """Entropic OT in the log domain (numerically stable Sinkhorn).
 
     Args:
         cost: (B, N, M) ground-cost matrices.
-        a:    (B, N) source marginals (defaults to uniform).
-        b:    (B, M) target marginals (defaults to uniform).
+        row_marginal: (B, N) row marginals (defaults to uniform).
+        col_marginal: (B, M) column marginals (defaults to uniform).
         eps:  entropic regularisation strength (relative to the cost scale).
         n_iters: number of Sinkhorn iterations.
 
     Returns:
         plan: (B, N, M) transport plan with row sums ~a and column sums ~b.
     """
+    if eps <= 0:
+        raise ValueError('eps must be positive')
+    if n_iters < 1:
+        raise ValueError('n_iters must be at least 1')
     B, N, M = cost.shape
-    if a is None:
+    if row_marginal is None:
         log_a = torch.full((B, N), -math.log(N), device=cost.device, dtype=cost.dtype)
     else:
-        log_a = torch.log(a.clamp_min(1e-12))
-    if b is None:
+        log_a = torch.log(row_marginal.clamp_min(1e-12))
+    if col_marginal is None:
         log_b = torch.full((B, M), -math.log(M), device=cost.device, dtype=cost.dtype)
     else:
-        log_b = torch.log(b.clamp_min(1e-12))
+        log_b = torch.log(col_marginal.clamp_min(1e-12))
 
     log_K = -cost / eps
     f = torch.zeros_like(log_a)
@@ -53,11 +57,23 @@ def sinkhorn_divergence(x, y, eps=0.05, n_iters=50):
     unsupervised training objective: the fused features should be close, in
     the Wasserstein sense, to the feature distributions of both sources.
     """
+    # Unit-normalising points gives all three terms the same bounded ground
+    # metric. Independently normalising each cost matrix would not define one
+    # Sinkhorn divergence.
+    x = F.normalize(x, dim=-1, eps=1e-8)
+    y = F.normalize(y, dim=-1, eps=1e-8)
+
     def ot_cost(p, q):
+        B, N, M = p.shape[0], p.shape[1], q.shape[1]
         c = torch.cdist(p, q) ** 2
-        c = c / (c.mean(dim=(1, 2), keepdim=True) + 1e-8)
-        plan = sinkhorn_log(c, eps=eps, n_iters=n_iters)
-        return (plan * c).sum(dim=(1, 2))
+        row = torch.full((B, N), 1.0 / N, device=p.device, dtype=p.dtype)
+        col = torch.full((B, M), 1.0 / M, device=p.device, dtype=p.dtype)
+        plan = sinkhorn_log(c, row, col, eps=eps, n_iters=n_iters)
+        reference = row.unsqueeze(2) * col.unsqueeze(1)
+        # Regularised OT with KL(P || row x col), not only <P, C>.
+        kl = plan * (torch.log(plan.clamp_min(1e-12)) -
+                     torch.log(reference.clamp_min(1e-12)))
+        return (plan * c + eps * kl).sum(dim=(1, 2))
 
     return ot_cost(x, y) - 0.5 * ot_cost(x, x) - 0.5 * ot_cost(y, y)
 
@@ -110,9 +126,19 @@ class FeatureTransport(nn.Module):
     """
 
     def __init__(self, window_size=16, eps=0.02, n_iters=50, spatial_weight=4.0,
-                 saliency_marginals=False, overlap=2, detail_kernel=9, hard_assignment=False):
+                 saliency_marginals=False, overlap=2, detail_kernel=9,
+                 hard_assignment=False, window_chunk_size=128):
         super(FeatureTransport, self).__init__()
-        assert window_size % overlap == 0, 'window_size must be divisible by overlap'
+        if window_size < 1:
+            raise ValueError('window_size must be positive')
+        if overlap < 1 or overlap > window_size or window_size % overlap:
+            raise ValueError('overlap must divide window_size and be in [1, window_size]')
+        if eps <= 0 or n_iters < 1:
+            raise ValueError('eps must be positive and n_iters must be at least 1')
+        if detail_kernel > 1 and detail_kernel % 2 == 0:
+            raise ValueError('detail_kernel must be odd, 0, or 1')
+        if window_chunk_size < 1:
+            raise ValueError('window_chunk_size must be positive')
         self.ws = window_size
         self.stride = window_size // overlap
         self.eps = eps
@@ -120,6 +146,7 @@ class FeatureTransport(nn.Module):
         self.spatial_weight = spatial_weight
         self.saliency_marginals = saliency_marginals
         self.hard_assignment = hard_assignment
+        self.window_chunk_size = window_chunk_size
         # detail_kernel > 0: the OT output only provides the low-frequency
         # (smoothed) displacement of the infrared features, while the original
         # high-frequency infrared detail is kept.  Counteracts the averaging of
@@ -129,44 +156,51 @@ class FeatureTransport(nn.Module):
             torch.arange(window_size), torch.arange(window_size), indexing='ij'), dim=-1)
         coords = coords.reshape(-1, 2).float() / max(window_size - 1, 1)
         # (1, ws*ws, ws*ws) squared spatial distances, normalised to [0, 1]
-        self.register_buffer('spatial_cost', (torch.cdist(coords, coords) ** 2) / 2.0)
+        self.register_buffer('spatial_cost', (torch.cdist(coords, coords) ** 2) / 2.0,
+                             persistent=False)
         hann = torch.hann_window(window_size + 2, periodic=False)[1:-1]
-        self.register_buffer('blend', (hann[:, None] * hann[None, :]).reshape(-1))
+        self.register_buffer('blend', (hann[:, None] * hann[None, :]).reshape(-1),
+                             persistent=False)
 
     @staticmethod
     def _saliency(feat):
         """Per-pixel saliency from the feature-energy deviation inside a window."""
         energy = feat.norm(dim=-1)                                  # (Bw, N)
         energy = energy - energy.mean(dim=1, keepdim=True)
-        return F.softmax(energy / (energy.std(dim=1, keepdim=True) + 1e-6), dim=1)
+        return F.softmax(energy / (energy.std(dim=1, keepdim=True, unbiased=False) + 1e-6),
+                         dim=1)
 
-    def forward(self, f_vis, f_ir):
+    def forward(self, f_vis, f_ir, return_plan=False):
+        if f_vis.shape != f_ir.shape:
+            raise ValueError('visible and infrared feature maps must have identical shapes; '
+                             'got %s and %s' % (tuple(f_vis.shape), tuple(f_ir.shape)))
         B, C, H, W = f_vis.shape
         ws, stride = self.ws, self.stride
         tv, padded = window_partition(f_vis, ws, stride)            # (Bw, N, C)
         ti, _ = window_partition(f_ir, ws, stride)
 
-        # Feature cost normalised per window so that eps has a consistent meaning
-        feat_cost = torch.cdist(tv, ti) ** 2
-        feat_cost = feat_cost / (feat_cost.mean(dim=(1, 2), keepdim=True) + 1e-8)
-        cost = feat_cost + self.spatial_weight * self.spatial_cost
-
-        # Marginals: visible side uniform (every output pixel receives mass).
-        # Optionally emphasise salient (thermal) infrared pixels; note this
-        # forces hot content to spread over the window, which lowers contrast.
-        a = None
-        b = self._saliency(ti) if self.saliency_marginals else None
-
-        plan = sinkhorn_log(cost, a=a, b=b, eps=self.eps, n_iters=self.n_iters)
-        if self.hard_assignment:
-            # Monge-style map: each visible pixel takes the infrared feature it
-            # sends most mass to.  Sharper than the barycentric mean but not
-            # differentiable w.r.t. the plan.
-            idx = plan.argmax(dim=2, keepdim=True).expand(-1, -1, ti.shape[-1])
-            transported = torch.gather(ti, 1, idx)
-        else:
-            row_mass = plan.sum(dim=2, keepdim=True).clamp_min(1e-12)
-            transported = torch.bmm(plan, ti) / row_mass             # barycentric projection
+        transported_chunks, plan_chunks = [], []
+        for start in range(0, tv.shape[0], self.window_chunk_size):
+            v = tv[start:start + self.window_chunk_size]
+            i = ti[start:start + self.window_chunk_size]
+            feat_cost = torch.cdist(v, i) ** 2
+            feat_cost = feat_cost / (feat_cost.mean(dim=(1, 2), keepdim=True) + 1e-8)
+            cost = feat_cost + self.spatial_weight * self.spatial_cost
+            col = self._saliency(i) if self.saliency_marginals else None
+            plan = sinkhorn_log(cost, col_marginal=col, eps=self.eps,
+                                n_iters=self.n_iters)
+            if self.hard_assignment:
+                # Row-wise argmax heuristic; unlike a capacity-constrained
+                # assignment, this does not preserve the column marginal.
+                idx = plan.argmax(dim=2, keepdim=True).expand(-1, -1, i.shape[-1])
+                transported_chunk = torch.gather(i, 1, idx)
+            else:
+                row_mass = plan.sum(dim=2, keepdim=True).clamp_min(1e-12)
+                transported_chunk = torch.bmm(plan, i) / row_mass
+            transported_chunks.append(transported_chunk)
+            if return_plan:
+                plan_chunks.append(plan)
+        transported = torch.cat(transported_chunks, dim=0)
 
         transported = window_reverse(transported, ws, stride, B, C, padded, (H, W), self.blend)
         if self.detail_kernel > 1:
@@ -175,7 +209,7 @@ class FeatureTransport(nn.Module):
             displacement = F.avg_pool2d(F.pad(displacement, (k // 2,) * 4, mode='replicate'),
                                         k, stride=1)
             transported = f_ir + displacement
-        return transported, plan
+        return transported, (torch.cat(plan_chunks, dim=0) if return_plan else None)
 
 
 class ChannelOT(nn.Module):

@@ -46,7 +46,9 @@ def parse_args():
     p.add_argument('--detail_kernel', type=int, default=9,
                    help='smooth the OT displacement with this kernel and keep IR detail (0 = off)')
     p.add_argument('--hard_assignment', action='store_true',
-                   help='use the argmax (Monge-style) map instead of the barycentric projection')
+                   help='use a row-wise argmax heuristic instead of the barycentric projection')
+    p.add_argument('--window_chunk_size', type=int, default=128,
+                   help='maximum number of OT windows processed together')
     p.add_argument('--gain', type=float, default=6.0, help='sharpness of the adaptive weight')
     p.add_argument('--channel_ot', action='store_true',
                    help='pre-align IR feature channels to the visible ones with 1-D OT')
@@ -55,7 +57,22 @@ def parse_args():
     p.add_argument('--save_aux', action='store_true', help='save OT weight map and transported IR')
     p.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
     p.add_argument('--no_save', action='store_true')
-    return p.parse_args()
+    args = p.parse_args()
+    if bool(args.vis) != bool(args.ir):
+        p.error('--vis and --ir must be provided together')
+    if args.window_size < 1:
+        p.error('--window_size must be positive')
+    if args.overlap < 1 or args.overlap > args.window_size or args.window_size % args.overlap:
+        p.error('--overlap must divide --window_size and be in [1, window_size]')
+    if args.eps <= 0 or args.n_iters < 1:
+        p.error('--eps must be positive and --n_iters must be at least 1')
+    if args.detail_kernel > 1 and args.detail_kernel % 2 == 0:
+        p.error('--detail_kernel must be odd, 0, or 1')
+    if not 0 < args.lam < 1:
+        p.error('--lam must be strictly between 0 and 1')
+    if args.window_chunk_size < 1:
+        p.error('--window_chunk_size must be positive')
+    return args
 
 
 def build_model(args):
@@ -64,7 +81,7 @@ def build_model(args):
                        spatial_weight=args.spatial_weight, channel_ot=args.channel_ot,
                        saliency_marginals=args.saliency_marginals, overlap=args.overlap,
                        detail_kernel=args.detail_kernel, hard_assignment=args.hard_assignment,
-                       gain=args.gain)
+                       gain=args.gain, window_chunk_size=args.window_chunk_size)
     return model.eval().to(args.device)
 
 
