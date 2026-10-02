@@ -86,7 +86,7 @@ MI = MI(Vis,F)+MI(IR,F), Qabf edge-transfer):
 
 The adaptive OT fusion keeps the visible image as the base and injects thermal content where it is informative,
 which raises contrast (SD) and information preserved from the sources (MI); plain max-fusion of the transported
-features matches IFCNN-MAX.
+features matches IFCNN-MAX. Fused results for the 14 IV pairs are in [Results/IV-OT](Results/IV-OT).
 
 Usage:
 ```bash
