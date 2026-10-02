@@ -45,6 +45,68 @@ jupyter notebook IFCNN_Notebook.ipynb
 
 
 
+### IFCNN-OT: fusion through optimal transport (infrared → visible)
+`Code/model_ot.py` extends IFCNN with an optimal-transport (OT) fusion stage for infrared/visible image fusion.
+The frozen IFCNN feature extractor (CONV1 + CONV2) and reconstruction layers (CONV3 + CONV4) are kept, and
+the pretrained `IFCNN-MAX.pth` weights are reused, so no training is required.
+
+Pipeline:
+
+```
+Vis ──► CONV1 ──► CONV2 ──► f_vis ────────────────────────────┐
+                                                               ├─► OT fusion ─► CONV3 ─► CONV4 ─► fused
+IR  ──► CONV1 ──► CONV2 ──► f_ir ──► FeatureTransport ─► T(f_ir) ┘
+```
+
+1. **FeatureTransport** (`ot_fusion.FeatureTransport`): inside overlapping local windows, the per-pixel visible and
+   infrared feature vectors are treated as two discrete measures and an entropic OT plan `P` between them is solved
+   with log-domain Sinkhorn. The ground cost mixes feature-space distance and spatial distance (`--spatial_weight`),
+   so the transport stays coherent with the registered visible image. The barycentric projection of the plan,
+   `T(f_ir) = (P f_ir) / (P 1)`, *transfers the infrared features into the geometry of the visible image*. Because the
+   entropic projection averages features, only its smoothed displacement is applied while the infrared
+   high-frequency detail is kept (`--detail_kernel`); `--hard_assignment` uses the argmax (Monge-style) map instead.
+   Windows are blended with a Hann kernel to avoid seams.
+2. **Fusion rule** (`IFCNN_OT.fuse`): a Wasserstein displacement interpolation between the visible features and
+   the transported infrared features, `f = (1-λ) f_vis + λ · max(f_vis, T(f_ir))`, where λ is either a scalar
+   (`--fuse_mode interp`) or a spatially-adaptive weight that grows where the transported infrared response is
+   stronger than the visible one (`--fuse_mode adaptive`, default). `--fuse_mode max` gives plain IFCNN-MAX over
+   `(f_vis, T(f_ir))`.
+3. **ChannelOT** (`ot_fusion.ChannelOT`, optional, `--channel_ot`): exact 1-D optimal transport (quantile matching)
+   per feature channel, pushing the marginal distribution of every infrared channel onto that of the visible channel
+   before the local transport.
+
+Metrics on the IV pairs *Camp / Road / Kayak / Octec* (mean; EN entropy, SD std-dev, SF spatial frequency,
+MI = MI(Vis,F)+MI(IR,F), Qabf edge-transfer):
+
+| model | EN | SD | SF | MI | Qabf |
+|---|---|---|---|---|---|
+| IFCNN-MAX (original) | 6.42 | 28.97 | 10.16 | 2.80 | 0.544 |
+| IFCNN-OT `--fuse_mode max` | 6.41 | 28.81 | 10.07 | 2.75 | 0.530 |
+| IFCNN-OT `--fuse_mode adaptive` (default) | 6.36 | 34.32 | 9.41 | 3.26 | 0.468 |
+
+The adaptive OT fusion keeps the visible image as the base and injects thermal content where it is informative,
+which raises contrast (SD) and information preserved from the sources (MI); plain max-fusion of the transported
+features matches IFCNN-MAX.
+
+Usage:
+```bash
+cd Code
+python IFCNN_OT_Main.py                                  # fuse the 14 IV pairs -> results/IFCNN-OT-ADAPTIVE-IV-*.png
+python IFCNN_OT_Main.py --fuse_mode interp --lam 0.4     # fixed interpolation weight
+python IFCNN_OT_Main.py --vis a_vis.png --ir a_ir.png --out fused.png
+python IFCNN_OT_Main.py --save_aux                       # also save the OT weight map and transported-IR energy
+python train_ot.py --epochs 50                           # optional: fine-tune CONV3/4 + λ with a Sinkhorn-divergence loss
+python IFCNN_OT_Main.py --weights snapshots/IFCNN-OT.pth
+```
+Main knobs: `--window_size` (OT window), `--eps` (entropic regularisation), `--n_iters` (Sinkhorn iterations),
+`--spatial_weight` (how strongly transport is kept spatially local), `--overlap` (window overlap factor), `--lam`
+and `--gain` (operating point / sharpness of the adaptive weight). The code runs on CUDA when available and falls
+back to CPU.
+
+`ot_fusion.sinkhorn_divergence` additionally provides a debiased Sinkhorn divergence that `train_ot.py` uses as an
+unsupervised objective: the fused image's features should be close, in the Wasserstein sense, to the feature
+distributions of both source images.
+
 ### Typos
 1. Eq. (4) in our paper is wrongly written, the correct expression can be referred to the official expression in [OpenCV document](https://docs.opencv.org/3.4.2/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa), i.e., <img src="https://latex.codecogs.com/gif.latex?G(i)=\alpha&space;\cdot&space;e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}" title="G(i)=\alpha \cdot e^{-\frac{[i-(ksize-1)/2]^2}{2\sigma^2}}" />, where <img src="https://latex.codecogs.com/gif.latex?i=0&space;\cdots&space;(ksize-1)" title="i=0 \cdots (ksize-1)" />, <img src="https://latex.codecogs.com/gif.latex?ksize=2\times{kr}&plus;1" title="ksize=2\times{kr}+1" />, <img src="https://latex.codecogs.com/gif.latex?\sigma=0.6\times(ksize-1)&plus;0.8" title="\sigma=0.6\times(ksize-1)+0.8" />, and <img src="https://latex.codecogs.com/gif.latex?\alpha" title="\alpha" /> is the scale factor chosen for achieving <img src="https://latex.codecogs.com/gif.latex?\sum&space;G\left(i\right)=1" title="\sum G\left(i\right)=1" />.
 2. Stride and padding parameters of CONV4 are respectively 1 and 0, rather than both 0.
